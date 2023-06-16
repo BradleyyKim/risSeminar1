@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analog Clock</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        font-size: 18px;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        margin: 10px;
+      }
+      a {
+        color: blue;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .clock {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        background: #222;
+        border: 3px solid #444;
+        border-radius: 50%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+      .hour,
+      .minute,
+      .second {
+        position: absolute;
+        width: 50%;
+        height: 2px;
+        background: #eee;
+        top: 50%;
+        transform-origin: 100%;
+        pointer-events: none;
+      }
+      .second {
+        background: #f00;
+        height: 1px;
+      }
+      .circle {
+        position: absolute;
+        top: 49%;
+        left: 49%;
+        width: 2%;
+        height: 2%;
+        background: #eee;
+        border-radius: 50%;
+      }
+      .image-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="clock">
+      <div class="hour" id="hour"></div>
+      <div class="minute" id="minute"></div>
+      <div class="second" id="second"></div>
+      <div class="circle"></div>
+    </div>
+    <button id="generate-btn" style="margin-bottom: 20px">이미지 생성</button>
+    <div class="image-container"></div>
+    <h1>링크 목록</h1>
+    <ul>
+      <li>
+        <a href="https://nlpinkorean.github.io/illustrated-transformer" target="_blank"
+          >Transformer 모델링에 관한 글
+        </a>
+      </li>
+      <li><a href="https://wikidocs.net/31379" target="_blank">딥 러닝을 이용한 자연어 처리 wiki docs</a></li>
+      <li><a href="https://hryang06.github.io/nlp/NLP/" target="_blank">NLP 이미지</a></li>
+      <li>
+        <a
+          href="https://amatriain.net/blog/transformer-models-an-introduction-and-catalog-2d1e9039f376/"
+          target="_blank"
+          >Transformer model tree 이미지</a
+        >
+      </li>
+      <li>
+        <a href="https://subscription.fastcampus.app/course-detail/215310/" target="_blank"
+          >패스트캠퍼스 ChatGPT 기술 리뷰 A to Z</a
+        >
+      </li>
+      <li><a href="https://www.stateof.ai/" target="_blank">AI Report 2022</a></li>
+      <li>
+        <a
+          href="https://www.cadgraphics.co.kr/newsview.php?pages=news&sub=news01&catecode=2&num=72375#:~:text=%ED%98%84%EC%9E%AC%EB%8A%94%20%EC%96%BC%EB%A7%88%EB%82%98%20%EC%98%AC%EB%9E%90%EC%9D%84%EA%B9%8C,7000%EC%96%B5%20%EC%9B%90)%EB%9D%BC%EA%B3%A0%20%ED%95%9C%EB%8B%A4/"
+          target="_blank"
+          >chatGPT 매출 기사</a
+        >
+      </li>
+      <li><a href="https://huggingface.co/" target="_blank">머신러닝, 딥러닝 documentation Hub</a></li>
+    </ul>
+    <!-- <div class="image-container" id="image-container"></div>
+    <button id="change-image" onclick="getRandomImage()">Change Image</button> -->
+    <!-- <h1>내가 가진 링크들</h1>
+    <ul>
+      <li><a href="https://wikidocs.net/31379" target="_blank">딥 러닝을 이용한 자연어 처리 wiki docs</a></li>
+      <li><a href="https://hryang06.github.io/nlp/NLP/" target="_blank">NLP 이미지</a></li>
+      <li>
+        <a
+          href="https://amatriain.net/blog/transformer-models-an-introduction-and-catalog-2d1e9039f376/"
+          target="_blank"
+          >Transformer model tree 이미지</a
+        >
+      </li>
+      <li>
+        <a href="https://subscription.fastcampus.app/course-detail/215310/" target="_blank"
+          >패스트캠퍼스 ChatGPT 기술 리뷰 A to Z</a
+        >
+      </li>
+      <li><a href="https://www.stateof.ai/" target="_blank">AI Report 2022</a></li>
+      <li>
+        <a
+          href="https://www.cadgraphics.co.kr/newsview.php?pages=news&sub=news01&catecode=2&num=72375#:~:text=%ED%98%84%EC%9E%AC%EB%8A%94%20%EC%96%BC%EB%A7%88%EB%82%98%20%EC%98%AC%EB%9E%90%EC%9D%84%EA%B9%8C,7000%EC%96%B5%20%EC%9B%90)%EB%9D%BC%EA%B3%A0%20%ED%95%9C%EB%8B%A4/"
+          target="_blank"
+          >chatGPT 매출 기사</a
+        >
+      </li>
+      <li><a href="https://huggingface.co/" target="_blank">머신러닝, 딥러닝 documentation Hub</a></li>
+    </ul> -->
+    <script>
+      const apiKey = "20412980-dc60e894984ce9855f36f0b67";
+      const imageContainer = document.querySelector(".image-container");
+      const generateBtn = document.getElementById("generate-btn");
+
+      async function fetchRandomImage() {
+        const response = await fetch(`https://pixabay.com/api/?key=${apiKey}&q=landscape&image_type=photo&per_page=50`);
+        const data = await response.json();
+        const randomIndex = Math.floor(Math.random() * data.hits.length);
+        return data.hits[randomIndex].webformatURL;
+      }
+
+      function addImageToContainer(src) {
+        const image = document.createElement("img");
+        image.src = src;
+        image.style.width = "150px";
+        image.style.height = "150px";
+        imageContainer.appendChild(image);
+      }
+
+      generateBtn.addEventListener("click", async () => {
+        const randomImageUrl = await fetchRandomImage();
+        addImageToContainer(randomImageUrl);
+      });
+      // const API_KEY = "20412980-dc60e894984ce9855f36f0b67";
+      // let page = 1;
+
+      // function getRandomImage() {
+      //   fetch(
+      //     `https://pixabay.com/api/?key=${API_KEY}&image_type=photo&orientation=horizontal&editors_choice=true&per_page=3&page=${page}`
+      //   )
+      //     .then((res) => res.json())
+      //     .then((data) => {
+      //       const imageContainer = document.getElementById("image-container");
+      //       const randomIndex = Math.floor(Math.random() * data.hits.length);
+      //       const imageUrl = data.hits[randomIndex].webformatURL;
+
+      //       imageContainer.style.backgroundImage = `url(${imageUrl})`;
+
+      //       page++;
+      //     })
+      //     .catch((error) => console.error("Error fetching image:", error));
+      // }
+
+      // // 처음 페이지에 이미지 로딩
+      // getRandomImage();
+
+      const hourEl = document.getElementById("hour");
+      const minuteEl = document.getElementById("minute");
+      const secondEl = document.getElementById("second");
+
+      function setDate() {
+        const now = new Date();
+
+        const seconds = now.getSeconds();
+        const secondsDegrees = (seconds / 60) * 360 + 90;
+        secondEl.style.transform = `rotate(${secondsDegrees}deg)`;
+
+        const minutes = now.getMinutes();
+        const minutesDegrees = (minutes / 60) * 360 + 90;
+        minuteEl.style.transform = `rotate(${minutesDegrees}deg)`;
+
+        const hours = now.getHours();
+        const hoursDegrees = (hours / 12) * 360 + 90;
+        hourEl.style.transform = `rotate(${hoursDegrees}deg)`;
+      }
+
+      setInterval(setDate, 1000);
+      setDate();
+    </script>
+  </body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아날로그 시계</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="clock">
+        <div class="hand hour-hand"></div>
+        <div class="hand minute-hand"></div>
+        <div class="hand second-hand"></div>
+      </div>
+      <div>
+        <button id="generateImageBtn">이미지 생성하기</button>
+        <div class="imgContainer" id="imageContainer"></div>
+      </div>
+      <h1>나만의 링크 모음</h1>
+      <ul>
+        <li>
+          <a href="https://nlpinkorean.github.io/illustrated-transformer" target="_blank"
+            >Transformer 모델링에 관한 글
+          </a>
+        </li>
+        <li><a href="https://wikidocs.net/31379" target="_blank">딥 러닝을 이용한 자연어 처리 wiki docs </a></li>
+        <li><a href="https://www.example3.com" target="_blank">Example 3</a></li>
+        <li><a href="https://hryang06.github.io/nlp/NLP/" target="_blank">NLP 이미지</a></li>
+        <li>
+          <a
+            href="https://amatriain.net/blog/transformer-models-an-introduction-and-catalog-2d1e9039f376/"
+            target="_blank"
+            >Transformer model tree 이미지</a
+          >
+        </li>
+        <li>
+          <a href="https://subscription.fastcampus.app/course-detail/215310/" target="_blank"
+            >패스트캠퍼스 ChatGPT 기술 리뷰 A to Z</a
+          >
+        </li>
+        <li><a href="https://www.stateof.ai/" target="_blank">AI Report 2022</a></li>
+        <li>
+          <a
+            href="https://www.cadgraphics.co.kr/newsview.php?pages=news&sub=news01&catecode=2&num=72375#:~:text=%ED%98%84%EC%9E%AC%EB%8A%94%20%EC%96%BC%EB%A7%88%EB%82%98%20%EC%98%AC%EB%9E%90%EC%9D%84%EA%B9%8C,7000%EC%96%B5%20%EC%9B%90)%EB%9D%BC%EA%B3%A0%20%ED%95%9C%EB%8B%A4/
+          "
+            target="_blank"
+            >chatGPT 매출 기사</a
+          >
+        </li>
+        <li><a href="https://huggingface.co/" target="_blank">머신러닝, 딥러닝 documentation Hub</a></li>
+      </ul>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html> -->

@@ -1,0 +1,36 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #222;
+  margin: 0;
+}
+
+.clock {
+  width: 200px;
+  height: 200px;
+  background-color: #444;
+  border-radius: 50%;
+  position: relative;
+  background-image: radial-gradient(circle, rgba(238, 238, 238, 1) 1%, rgba(67, 67, 67, 1) 100%);
+}
+
+.hand {
+  position: absolute;
+  width: 50%;
+  height: 2px;
+  background-color: black;
+  top: 50%;
+  transform-origin: 100%;
+  transform: translateX(-50%);
+}
+
+.second-hand {
+  background-color: red;
+  height: 1px;
+}
+
+.minute-hand {
+  height: 3px;
+}
